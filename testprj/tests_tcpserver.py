@@ -1,4 +1,5 @@
 from django.test import TestCase
+
 from mjml import settings as mjml_settings
 from testprj.tools import safe_change_mjml_settings, MJMLServers, MJMLFixtures, render_tpl
 
@@ -8,18 +9,18 @@ class TestMJMLTCPServer(MJMLFixtures, MJMLServers, TestCase):
     _settings_manager = None
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         cls._settings_manager = safe_change_mjml_settings()
         cls._settings_manager.__enter__()
         mjml_settings.MJML_BACKEND_MODE = cls.SERVER_TYPE
         super().setUpClass()
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         super().tearDownClass()
         cls._settings_manager.__exit__(None, None, None)
 
-    def test_simple(self):
+    def test_simple(self) -> None:
         html = render_tpl(self.TPLS['simple'])
         self.assertIn('<html ', html)
         self.assertIn('<body', html)
@@ -34,7 +35,7 @@ class TestMJMLTCPServer(MJMLFixtures, MJMLServers, TestCase):
                 {% endmjml %}
             """)
 
-    def test_large_tpl(self):
+    def test_large_tpl(self) -> None:
         html = render_tpl(self.TPLS['with_text_context'], {
             'text': '[START]' + ('1 2 3 4 5 6 7 8 9 0 ' * 410 * 1024) + '[END]',
         })
@@ -43,8 +44,10 @@ class TestMJMLTCPServer(MJMLFixtures, MJMLServers, TestCase):
         self.assertIn('[START]', html)
         self.assertIn('[END]', html)
 
-    def test_unicode(self):
-        html = render_tpl(self.TPLS['with_text_context_and_unicode'], {'text': self.TEXTS['unicode']})
+    def test_unicode(self) -> None:
+        html = render_tpl(self.TPLS['with_text_context_and_unicode'], {
+            'text': self.TEXTS['unicode'],
+        })
         self.assertIn('<html ', html)
         self.assertIn('<body', html)
         self.assertIn('Український текст', html)

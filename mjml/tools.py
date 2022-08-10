@@ -1,17 +1,19 @@
 import copy
 import json
-import socket
 import random
+import socket
 import subprocess
 import tempfile
-from django.utils.encoding import force_str, force_bytes
-from mjml import settings as mjml_settings
+from typing import Optional, Dict, List
 
+from django.utils.encoding import force_str, force_bytes
+
+from mjml import settings as mjml_settings
 
 _cache = {}
 
 
-def _mjml_render_by_cmd(mjml_code):
+def _mjml_render_by_cmd(mjml_code: str) -> str:
     if 'cmd_args' not in _cache:
         cmd_args = copy.copy(mjml_settings.MJML_EXEC_CMD)
         if not isinstance(cmd_args, list):
@@ -44,7 +46,7 @@ def _mjml_render_by_cmd(mjml_code):
     return force_str(stdout)
 
 
-def socket_recvall(sock, n):
+def socket_recvall(sock: socket.socket, n: int) -> Optional[bytes]:
     data = b''
     while len(data) < n:
         packet = sock.recv(n - len(data))
@@ -54,7 +56,7 @@ def socket_recvall(sock, n):
     return data
 
 
-def _mjml_render_by_tcpserver(mjml_code):
+def _mjml_render_by_tcpserver(mjml_code: str) -> str:
     if len(mjml_settings.MJML_TCPSERVERS) > 1:
         servers = list(mjml_settings.MJML_TCPSERVERS)[:]
         random.shuffle(servers)
@@ -95,7 +97,7 @@ def _mjml_render_by_tcpserver(mjml_code):
     )
 
 
-def _mjml_render_by_httpserver(mjml_code):
+def _mjml_render_by_httpserver(mjml_code: str) -> str:
     import requests.auth
 
     if len(mjml_settings.MJML_HTTPSERVERS) > 1:
@@ -127,17 +129,20 @@ def _mjml_render_by_httpserver(mjml_code):
             data = {}
 
         if response.status_code == 200:
-            errors = data.get('errors')
+            errors: Optional[List[Dict]] = data.get('errors')
             if errors:
-                msgs = ['Line: {e[line]} Tag: {e[tagName]} Message: {e[message]}'.format(e=e) for e in errors]
-                raise RuntimeError('MJML compile error (via MJML HTTP server): {}'.format('\n'.join(msgs)))
+                msg_lines = [
+                    f'Line: {e.get("line")} Tag: {e.get("tagName")} Message: {e.get("message")}'
+                    for e in errors
+                ]
+                msg_str = '\n'.join(msg_lines)
+                raise RuntimeError(f'MJML compile error (via MJML HTTP server): {msg_str}')
 
             return force_str(data['html'])
         else:
-            msg = '[code={}, request_id={}] {}'.format(
-                response.status_code,
-                data.get('request_id', ''),
-                data.get('message', 'Unknown error.'),
+            msg = (
+                f"[code={response.status_code}, request_id={data.get('request_id', '')}] "
+                f"{data.get('message', 'Unknown error.')}"
             )
             raise RuntimeError(f'MJML compile error (via MJML HTTP server): {msg}')
 
@@ -148,7 +153,7 @@ def _mjml_render_by_httpserver(mjml_code):
     )
 
 
-def mjml_render(mjml_source):
+def mjml_render(mjml_source: str) -> str:
     if mjml_settings.MJML_BACKEND_MODE == 'cmd':
         return _mjml_render_by_cmd(mjml_source)
     elif mjml_settings.MJML_BACKEND_MODE == 'tcpserver':

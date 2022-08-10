@@ -1,10 +1,11 @@
 from django.apps import AppConfig
 from django.core.exceptions import ImproperlyConfigured
-from mjml.tools import mjml_render
+
 from mjml import settings as mjml_settings
+from mjml.tools import mjml_render
 
 
-def check_mjml_command():
+def check_mjml_command() -> None:
     try:
         html = mjml_render(
             '<mjml><mj-body><mj-container><mj-text>'
@@ -31,6 +32,6 @@ class MJMLConfig(AppConfig):
     name = 'mjml'
     verbose_name = 'Use MJML in Django templates'
 
-    def ready(self):
+    def ready(self) -> None:
         if mjml_settings.MJML_BACKEND_MODE == 'cmd' and mjml_settings.MJML_CHECK_CMD_ON_STARTUP:
             check_mjml_command()

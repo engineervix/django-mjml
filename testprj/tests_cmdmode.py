@@ -1,9 +1,10 @@
 from django.test import TestCase
+
 from testprj.tools import render_tpl, MJMLFixtures
 
 
 class TestMJMLCMDMode(MJMLFixtures, TestCase):
-    def test_big_email(self):
+    def test_big_email(self) -> None:
         big_text = '[START]' + ('Big text. ' * 820 * 1024) + '[END]'
         html = render_tpl(self.TPLS['with_text_context'], {'text': big_text})
         self.assertIn('<html ', html)
@@ -14,7 +15,7 @@ class TestMJMLCMDMode(MJMLFixtures, TestCase):
         self.assertIn('</body>', html)
         self.assertIn('</html>', html)
 
-    def test_unicode(self):
+    def test_unicode(self) -> None:
         smile = '\u263a'
         checkmark = '\u2713'
         candy = '\U0001f36d'

@@ -1,22 +1,24 @@
-import os
 import copy
+import os
 import subprocess
 import time
+from contextlib import contextmanager, suppress
+from typing import Optional, Dict, Any
 from urllib.parse import urlparse
-from contextlib import contextmanager
+
 from django.conf import settings
 from django.template import Template, Context
+
 from mjml import settings as mjml_settings
 from mjml import tools
 
 
-def get_mjml_version():
+def get_mjml_version() -> int:
     env_ver = os.environ.get('MJML_VERSION', None)
     if env_ver:
-        try:
+        with suppress(ValueError, TypeError, IndexError):
             return int(env_ver.split('.')[0])
-        except (ValueError, TypeError, IndexError):
-            pass
+
     return settings.DEFAULT_MJML_VERSION
 
 
@@ -42,7 +44,7 @@ def safe_change_mjml_settings():
         tools._cache.clear()
 
 
-def render_tpl(tpl, context=None):
+def render_tpl(tpl: str, context: Optional[Dict[str, Any]] = None) -> str:
     if get_mjml_version() >= 4:
         tpl = tpl.replace('<mj-container>', '').replace('</mj-container>', '')
     return Template('{% load mjml %}' + tpl).render(Context(context))
@@ -53,13 +55,13 @@ class MJMLServers:
     _processes = []
 
     @classmethod
-    def _terminate_processes(cls):
+    def _terminate_processes(cls) -> None:
         while cls._processes:
             p = cls._processes.pop()
             p.terminate()
 
     @classmethod
-    def _start_tcp_servers(cls):
+    def _start_tcp_servers(cls) -> None:
         root_dir = os.path.dirname(settings.BASE_DIR)
         tcpserver_path = os.path.join(root_dir, 'mjml-tcpserver', 'tcpserver.js')
         env = os.environ.copy()
@@ -75,11 +77,11 @@ class MJMLServers:
         time.sleep(5)
 
     @classmethod
-    def _stop_tcp_servers(cls):
+    def _stop_tcp_servers(cls) -> None:
         cls._terminate_processes()
 
     @classmethod
-    def _start_http_servers(cls):
+    def _start_http_servers(cls) -> None:
         env = os.environ.copy()
         for server_conf in mjml_settings.MJML_HTTPSERVERS:
             parsed = urlparse(server_conf['URL'])
@@ -94,11 +96,11 @@ class MJMLServers:
         time.sleep(5)
 
     @classmethod
-    def _stop_http_servers(cls):
+    def _stop_http_servers(cls) -> None:
         cls._terminate_processes()
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         super().setUpClass()
         if cls.SERVER_TYPE == 'tcpserver':
             cls._start_tcp_servers()
@@ -108,7 +110,7 @@ class MJMLServers:
             raise RuntimeError('Invalid SERVER_TYPE: {}', cls.SERVER_TYPE)
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         if cls.SERVER_TYPE == 'tcpserver':
             cls._stop_tcp_servers()
         elif cls.SERVER_TYPE == 'httpserver':

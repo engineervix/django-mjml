@@ -1,12 +1,7 @@
-# coding=utf-8
-from __future__ import absolute_import
 import unittest
 import json
 import requests.auth
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 from django.test import TestCase
 from django.utils.encoding import force_bytes
 from mjml import settings as mjml_settings

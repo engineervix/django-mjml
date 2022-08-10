@@ -1,3 +1,13 @@
+1.0 (2022-08-10)
+================
+ * Stopped supporting Python older than 3.6
+ * Stopped supporting Django older than 2.2
+ * Removed MJML 4.5 from tests
+ * Added MJML 4.12 and 4.13 in tests
+ * Moved MJML TCP-Server into separated repo https://github.com/danihodovic/mjml-server
+ * Renamed branch `master` to `main`
+
+
 0.12.0 (2022-01-19)
 ===================
  * Added supporting Django 4.0

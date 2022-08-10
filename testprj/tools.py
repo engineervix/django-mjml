@@ -1,13 +1,8 @@
-# coding=utf-8
-from __future__ import absolute_import
 import os
 import copy
 import subprocess
 import time
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+from urllib.parse import urlparse
 from contextlib import contextmanager
 from django.conf import settings
 from django.template import Template, Context
@@ -66,7 +61,7 @@ class MJMLServers(object):
     @classmethod
     def _start_tcp_servers(cls):
         root_dir = os.path.dirname(settings.BASE_DIR)
-        tcpserver_path = os.path.join(root_dir, 'mjml', 'node', 'tcpserver.js')
+        tcpserver_path = os.path.join(root_dir, 'mjml-tcpserver', 'tcpserver.js')
         env = os.environ.copy()
         env['NODE_PATH'] = root_dir
         for host, port in mjml_settings.MJML_TCPSERVERS:

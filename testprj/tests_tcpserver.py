@@ -1,5 +1,3 @@
-# coding=utf-8
-from __future__ import absolute_import
 from django.test import TestCase
 from mjml import settings as mjml_settings
 from testprj.tools import safe_change_mjml_settings, MJMLServers, MJMLFixtures, render_tpl

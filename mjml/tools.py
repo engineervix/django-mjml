@@ -1,11 +1,5 @@
-# coding=utf-8
-from __future__ import absolute_import
 import copy
 import json
-try:
-    from json import JSONDecodeError
-except ImportError:
-    JSONDecodeError = ValueError
 import socket
 import random
 import subprocess
@@ -128,7 +122,7 @@ def _mjml_render_by_httpserver(mjml_code):
 
         try:
             data = response.json()
-        except (TypeError, JSONDecodeError):
+        except (TypeError, json.JSONDecodeError):
             data = {}
 
         if response.status_code == 200:

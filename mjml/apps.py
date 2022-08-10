@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from django.apps import AppConfig
 from django.core.exceptions import ImproperlyConfigured
 from mjml.tools import mjml_render

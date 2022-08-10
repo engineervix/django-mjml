@@ -1,4 +1,4 @@
-.. image:: https://github.com/liminspace/django-mjml/actions/workflows/test.yml/badge.svg?branch=master
+.. image:: https://github.com/liminspace/django-mjml/actions/workflows/test.yml/badge.svg?branch=main
  :target: https://github.com/liminspace/django-mjml/actions/workflows/test.yml
  :alt: test
 

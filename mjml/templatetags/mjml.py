@@ -10,8 +10,8 @@ class MJMLRenderNode(template.Node):
         self.nodelist = nodelist
 
     def render(self, context):
-        mjml = self.nodelist.render(context)
-        return mjml_render(mjml)
+        mjml_source = self.nodelist.render(context)
+        return mjml_render(mjml_source)
 
 
 @register.tag

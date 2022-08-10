@@ -15,12 +15,12 @@ class TestMJMLCMDMode(MJMLFixtures, TestCase):
         self.assertIn('</html>', html)
 
     def test_unicode(self):
-        smile = u'\u263a'
-        checkmark = u'\u2713'
-        candy = u'\U0001f36d'  # b'\xf0\x9f\x8d\xad'.decode('utf-8')
+        smile = '\u263a'
+        checkmark = '\u2713'
+        candy = '\U0001f36d'
         unicode_text = smile + checkmark + candy
         html = render_tpl(self.TPLS['with_text_context_and_unicode'], {'text': unicode_text})
         self.assertIn('<html ', html)
         self.assertIn('<body', html)
         self.assertIn(unicode_text, html)
-        self.assertIn(u'©', html)
+        self.assertIn('©', html)

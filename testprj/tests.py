@@ -115,6 +115,6 @@ class TestMJMLTemplatetag(MJMLFixtures, TestCase):
         html = render_tpl(self.TPLS['with_text_context_and_unicode'], {'text':  self.TEXTS['unicode']})
         self.assertIn('<html ', html)
         self.assertIn('<body', html)
-        self.assertIn(u'Український текст', html)
+        self.assertIn('Український текст', html)
         self.assertIn(self.TEXTS['unicode'], html)
-        self.assertIn(u'©', html)
+        self.assertIn('©', html)

@@ -21,9 +21,8 @@ WSGI_APPLICATION = 'testprj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(os.path.dirname(os.path.abspath(__file__)), 'db.sqlite3'),
         'NAME': ':memory:',
-    }
+    },
 }
 
 LANGUAGE_CODE = 'en-us'
@@ -39,7 +38,6 @@ USE_TZ = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': (os.path.join(BASE_DIR, 'templates'),),
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': (

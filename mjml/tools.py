@@ -28,17 +28,18 @@ def _mjml_render_by_cmd(mjml_code):
             p = subprocess.Popen(cmd_args, stdin=subprocess.PIPE, stdout=stdout_tmp_f, stderr=subprocess.PIPE)
             stderr = p.communicate(force_bytes(mjml_code))[1]
         except (IOError, OSError) as e:
+            cmd_str = ' '.join(cmd_args)
             raise RuntimeError(
-                'Problem to run command "{}"\n'.format(' '.join(cmd_args)) +
-                '{}\n'.format(e) +
-                'Check that mjml is installed and allow permissions for execute.\n' +
+                f'Problem to run command "{cmd_str}"\n'
+                f'{e}\n'
+                'Check that mjml is installed and allow permissions to execute.\n'
                 'See https://github.com/mjmlio/mjml#installation'
-            )
+            ) from e
         stdout_tmp_f.seek(0)
         stdout = stdout_tmp_f.read()
 
     if stderr:
-        raise RuntimeError('MJML stderr is not empty: {}.'.format(force_str(stderr)))
+        raise RuntimeError(f'MJML stderr is not empty: {force_str(stderr)}.')
 
     return force_str(stdout)
 
@@ -82,15 +83,15 @@ def _mjml_render_by_tcpserver(mjml_code):
             if ok:
                 return result
             else:
-                raise RuntimeError('MJML compile error (via MJML TCP server): {}'.format(result))
+                raise RuntimeError(f'MJML compile error (via MJML TCP server): {result}')
         except socket.timeout:
             timeouts += 1
         finally:
             s.close()
     raise RuntimeError(
-        ('MJML compile error (via MJML TCP server): no working server\n'
-         'Number of servers: {total}\n'
-         'Timeouts: {timeouts}').format(total=len(servers), timeouts=timeouts)
+        'MJML compile error (via MJML TCP server): no working server\n'
+        f'Number of servers: {len(servers)}\n'
+        f'Timeouts: {timeouts}'
     )
 
 
@@ -138,20 +139,20 @@ def _mjml_render_by_httpserver(mjml_code):
                 data.get('request_id', ''),
                 data.get('message', 'Unknown error.'),
             )
-            raise RuntimeError('MJML compile error (via MJML HTTP server): {}'.format(msg))
+            raise RuntimeError(f'MJML compile error (via MJML HTTP server): {msg}')
 
     raise RuntimeError(
-        ('MJML compile error (via MJML HTTP server): no working server\n'
-         'Number of servers: {total}\n'
-         'Timeouts: {timeouts}').format(total=len(servers), timeouts=timeouts)
+        'MJML compile error (via MJML HTTP server): no working server\n'
+        f'Number of servers: {len(servers)}\n'
+        f'Timeouts: {timeouts}'
     )
 
 
-def mjml_render(mjml_code):
+def mjml_render(mjml_source):
     if mjml_settings.MJML_BACKEND_MODE == 'cmd':
-        return _mjml_render_by_cmd(mjml_code)
+        return _mjml_render_by_cmd(mjml_source)
     elif mjml_settings.MJML_BACKEND_MODE == 'tcpserver':
-        return _mjml_render_by_tcpserver(mjml_code)
+        return _mjml_render_by_tcpserver(mjml_source)
     elif mjml_settings.MJML_BACKEND_MODE == 'httpserver':
-        return _mjml_render_by_httpserver(mjml_code)
-    raise RuntimeError('Invalid settings.MJML_BACKEND_MODE "{}"'.format(mjml_settings.MJML_BACKEND_MODE))
+        return _mjml_render_by_httpserver(mjml_source)
+    raise RuntimeError(f'Invalid settings.MJML_BACKEND_MODE "{mjml_settings.MJML_BACKEND_MODE}"')

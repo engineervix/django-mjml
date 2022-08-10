@@ -48,7 +48,7 @@ def render_tpl(tpl, context=None):
     return Template('{% load mjml %}' + tpl).render(Context(context))
 
 
-class MJMLServers(object):
+class MJMLServers:
     SERVER_TYPE = NotImplemented  # tcpserver, httpserver
     _processes = []
 
@@ -68,8 +68,8 @@ class MJMLServers(object):
             p = subprocess.Popen([
                 'node',
                 tcpserver_path,
-                '--port={}'.format(port),
-                '--host={}'.format(host),
+                f'--port={port}',
+                f'--host={host}',
             ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env)
             cls._processes.append(p)
         time.sleep(5)
@@ -86,8 +86,8 @@ class MJMLServers(object):
             host, port = parsed.netloc.split(':')
             p = subprocess.Popen([
                 'mjml-http-server',
-                '--host={}'.format(host),
-                '--port={}'.format(port),
+                f'--host={host}',
+                f'--port={port}',
                 '--max-body=8500kb',
             ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env)
             cls._processes.append(p)
@@ -99,7 +99,7 @@ class MJMLServers(object):
 
     @classmethod
     def setUpClass(cls):
-        super(MJMLServers, cls).setUpClass()
+        super().setUpClass()
         if cls.SERVER_TYPE == 'tcpserver':
             cls._start_tcp_servers()
         elif cls.SERVER_TYPE == 'httpserver':
@@ -115,7 +115,7 @@ class MJMLServers(object):
             cls._stop_http_servers()
         else:
             raise RuntimeError('Invalid SERVER_TYPE: {}', cls.SERVER_TYPE)
-        super(MJMLServers, cls).tearDownClass()
+        super().tearDownClass()
 
 
 class MJMLFixtures:
@@ -173,9 +173,9 @@ class MJMLFixtures:
         """,
     }
     SYMBOLS = {
-        'smile': u'\u263a',
-        'checkmark': u'\u2713',
-        'candy': u'\U0001f36d',  # b'\xf0\x9f\x8d\xad'.decode('utf-8')
+        'smile': '\u263a',
+        'checkmark': '\u2713',
+        'candy': '\U0001f36d',  # b'\xf0\x9f\x8d\xad'.decode('utf-8')
     }
     TEXTS = {
         'unicode': SYMBOLS['smile'] + SYMBOLS['checkmark'] + SYMBOLS['candy'],

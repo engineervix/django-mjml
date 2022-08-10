@@ -12,11 +12,11 @@ class TestMJMLTCPServer(MJMLFixtures, MJMLServers, TestCase):
         cls._settings_manager = safe_change_mjml_settings()
         cls._settings_manager.__enter__()
         mjml_settings.MJML_BACKEND_MODE = cls.SERVER_TYPE
-        super(TestMJMLTCPServer, cls).setUpClass()
+        super().setUpClass()
 
     @classmethod
     def tearDownClass(cls):
-        super(TestMJMLTCPServer, cls).tearDownClass()
+        super().tearDownClass()
         cls._settings_manager.__exit__(None, None, None)
 
     def test_simple(self):
@@ -47,6 +47,6 @@ class TestMJMLTCPServer(MJMLFixtures, MJMLServers, TestCase):
         html = render_tpl(self.TPLS['with_text_context_and_unicode'], {'text': self.TEXTS['unicode']})
         self.assertIn('<html ', html)
         self.assertIn('<body', html)
-        self.assertIn(u'Український текст', html)
+        self.assertIn('Український текст', html)
         self.assertIn(self.TEXTS['unicode'], html)
-        self.assertIn(u'©', html)
+        self.assertIn('©', html)
